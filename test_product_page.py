@@ -44,6 +44,19 @@ link = "http://selenium1py.pythonanywhere.com/ru/catalogue/coders-at-work_207/?p
 #     page.add_to_basket()
 #     page.is_disappeared()
 
+class TestUserAddToBasketFromProductPage:
+
+    def test_user_cant_see_success_message(browser):
+        page = ProductPage(browser, link)
+        page.open()
+        page.should_not_be_success_message()
+
+    def test_user_can_add_product_to_basket(browser):
+        page = ProductPage(browser, link)
+        page.open()
+        page.should_be_buy_product()
+
+
 
 def test_guest_should_see_login_link_on_product_page(browser):
     link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
@@ -66,5 +79,7 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     page.go_to_basket_page()
     basket_page = BasketPage(browser, browser.current_url)
     basket_page.should_be_empty_basket()
+
+
 
 

@@ -17,3 +17,5 @@ class LoginPage(BasePage):
 
     def should_be_register_form(self):
         assert self.browser.find_element(By.CSS_SELECTOR, '#register_form')
+
+    def register_new_user(self, email, password):
