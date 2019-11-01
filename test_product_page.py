@@ -1,10 +1,13 @@
 import pytest
 
+from pages.login_page import LoginPage
 from pages.product_page import ProductPage
 from pages.basket_page import BasketPage
+from pages.main_page import MainPage
+
 import time
 
-link = "http://selenium1py.pythonanywhere.com/ru/catalogue/coders-at-work_207/?promo=newYear2019"
+# link = "http://selenium1py.pythonanywhere.com/ru/catalogue/coders-at-work_207/?promo=newYear2019"
 
 
 # @pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
@@ -44,18 +47,29 @@ link = "http://selenium1py.pythonanywhere.com/ru/catalogue/coders-at-work_207/?p
 #     page.add_to_basket()
 #     page.is_disappeared()
 
+@pytest.mark.user
 class TestUserAddToBasketFromProductPage:
 
-    def test_user_cant_see_success_message(browser):
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/"
+        page = MainPage(browser,
+                        link)  # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес
+        page.open()  # открываем страницу
+        page.go_to_login_page()  # выполняем метод страницы - переходим на страницу логина
+        login_page = LoginPage(browser, browser.current_url)
+        login_page.register_new_user(email=str(time.time()) + "@fakemail.org", password=str(time.time()))
+        login_page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser):
         page = ProductPage(browser, link)
         page.open()
         page.should_not_be_success_message()
 
-    def test_user_can_add_product_to_basket(browser):
+    def test_user_can_add_product_to_basket(self, browser):
         page = ProductPage(browser, link)
         page.open()
         page.should_be_buy_product()
-
 
 
 def test_guest_should_see_login_link_on_product_page(browser):
@@ -79,7 +93,3 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     page.go_to_basket_page()
     basket_page = BasketPage(browser, browser.current_url)
     basket_page.should_be_empty_basket()
-
-
-
-
